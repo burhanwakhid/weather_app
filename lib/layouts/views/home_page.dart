@@ -40,6 +40,7 @@ class _HomePageViewState extends State<HomePageView> {
                 return Column(
                   children: <Widget>[
                     Text(model.weatherModel.weather[0].description),
+                    Text('City: '+model.weatherModel.name),
                     Text(model.iconWeather),
                     Text(model.message)
                   ],

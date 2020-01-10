@@ -1,2 +1,2 @@
-const String apiOpenWeather = 'https://samples.openweathermap.org/data/2.5/weather?';
-const String keyOpenWeather = 'b6907d289e10d714a6e88b30761fae22';
+const String apiOpenWeather = 'http://api.openweathermap.org/data/2.5/weather?';
+const String keyOpenWeather = '77bb2790c54d4f2cc40e90e1dc5ab6a9';
