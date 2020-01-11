@@ -1,4 +1,5 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:weather_app/core/models/city_weather_model.dart';
 import 'package:weather_app/core/models/detail_weather_model.dart';
 import 'package:weather_app/core/models/weather_model.dart';
 import 'package:weather_app/core/services/api_service.dart';
@@ -32,10 +33,23 @@ class WeatherProvider extends BaseVM {
     notifyListeners();
   }
 
+  CityWeatherModel _cityWeatherModel;
+  CityWeatherModel get cityWeatherModel => _cityWeatherModel;
+  set cityWeatherModel(CityWeatherModel val) {
+    _cityWeatherModel =val;
+    notifyListeners();
+  }
+
+  Future<void> getCityWeather(city) async {
+    setIdle();
+    cityWeatherModel = await _api.fetchCityWeather(city);
+    setBusy();
+  }
+
   Future<void> getDataWeather() async{
     setIdle();
     Position position = await Geolocator()
-      .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
     latitude = position.latitude;
     longitude = position.longitude;
     print(latitude);
