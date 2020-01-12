@@ -38,6 +38,7 @@ class ApiService {
         throw Exception('Something error');
       }
     }catch(e){  
+      print(apiOpenWeather + 'q=$city&appid=$keyOpenWeather');
       throw Exception(e);
     }
   }

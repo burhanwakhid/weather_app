@@ -1,20 +1,20 @@
 // To parse this JSON data, do
 //
-//     final cityWeather = cityWeatherFromJson(jsonString);
+//     final cityWeatherModel = cityWeatherModelFromJson(jsonString);
 
 import 'dart:convert';
 
-CityWeatherModel cityWeatherFromJson(String str) => CityWeatherModel.fromJson(json.decode(str));
+CityWeatherModel cityWeatherModelFromJson(String str) => CityWeatherModel.fromJson(json.decode(str));
 
-String cityWeatherToJson(CityWeatherModel data) => json.encode(data.toJson());
+String cityWeatherModelToJson(CityWeatherModel data) => json.encode(data.toJson());
 
 class CityWeatherModel {
     Coord coord;
     List<Weather> weather;
     String base;
     Main main;
+    int visibility;
     Wind wind;
-    Rain rain;
     Clouds clouds;
     int dt;
     Sys sys;
@@ -28,8 +28,8 @@ class CityWeatherModel {
         this.weather,
         this.base,
         this.main,
+        this.visibility,
         this.wind,
-        this.rain,
         this.clouds,
         this.dt,
         this.sys,
@@ -44,8 +44,8 @@ class CityWeatherModel {
         weather: List<Weather>.from(json["weather"].map((x) => Weather.fromJson(x))),
         base: json["base"],
         main: Main.fromJson(json["main"]),
+        visibility: json["visibility"],
         wind: Wind.fromJson(json["wind"]),
-        rain: Rain.fromJson(json["rain"]),
         clouds: Clouds.fromJson(json["clouds"]),
         dt: json["dt"],
         sys: Sys.fromJson(json["sys"]),
@@ -60,8 +60,8 @@ class CityWeatherModel {
         "weather": List<dynamic>.from(weather.map((x) => x.toJson())),
         "base": base,
         "main": main.toJson(),
+        "visibility": visibility,
         "wind": wind.toJson(),
-        "rain": rain.toJson(),
         "clouds": clouds.toJson(),
         "dt": dt,
         "sys": sys.toJson(),
@@ -115,8 +115,6 @@ class Main {
     double tempMax;
     int pressure;
     int humidity;
-    int seaLevel;
-    int grndLevel;
 
     Main({
         this.temp,
@@ -125,8 +123,6 @@ class Main {
         this.tempMax,
         this.pressure,
         this.humidity,
-        this.seaLevel,
-        this.grndLevel,
     });
 
     factory Main.fromJson(Map<String, dynamic> json) => Main(
@@ -136,8 +132,6 @@ class Main {
         tempMax: json["temp_max"].toDouble(),
         pressure: json["pressure"],
         humidity: json["humidity"],
-        seaLevel: json["sea_level"],
-        grndLevel: json["grnd_level"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -147,45 +141,35 @@ class Main {
         "temp_max": tempMax,
         "pressure": pressure,
         "humidity": humidity,
-        "sea_level": seaLevel,
-        "grnd_level": grndLevel,
-    };
-}
-
-class Rain {
-    double the3H;
-
-    Rain({
-        this.the3H,
-    });
-
-    factory Rain.fromJson(Map<String, dynamic> json) => Rain(
-        the3H: json["3h"].toDouble(),
-    );
-
-    Map<String, dynamic> toJson() => {
-        "3h": the3H,
     };
 }
 
 class Sys {
+    int type;
+    int id;
     String country;
     int sunrise;
     int sunset;
 
     Sys({
+        this.type,
+        this.id,
         this.country,
         this.sunrise,
         this.sunset,
     });
 
     factory Sys.fromJson(Map<String, dynamic> json) => Sys(
+        type: json["type"],
+        id: json["id"],
         country: json["country"],
         sunrise: json["sunrise"],
         sunset: json["sunset"],
     );
 
     Map<String, dynamic> toJson() => {
+        "type": type,
+        "id": id,
         "country": country,
         "sunrise": sunrise,
         "sunset": sunset,

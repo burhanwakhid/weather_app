@@ -19,6 +19,20 @@ class WeatherProvider extends BaseVM {
     notifyListeners();
   }
 
+  String _citymessage;
+  String get citymessage => _citymessage;
+  set citymessage(String val) {
+    _citymessage =val;
+    notifyListeners();
+  }
+
+  String _cityiconWeather;
+  String get cityiconWeather => _cityiconWeather;
+  set cityiconWeather(String val) {
+    _cityiconWeather = val;
+    notifyListeners();
+  }
+
   String _message;
   String get message => _message;
   set message(String val) {
@@ -43,6 +57,9 @@ class WeatherProvider extends BaseVM {
   Future<void> getCityWeather(city) async {
     setIdle();
     cityWeatherModel = await _api.fetchCityWeather(city);
+    cityiconWeather = detailWeatherModel.getWeatherIcon(cityWeatherModel.weather[0].id);
+    double celcius = cityWeatherModel.main.temp - 273.15;
+    citymessage = detailWeatherModel.getMessage(celcius.toInt());
     setBusy();
   }
 
@@ -55,11 +72,9 @@ class WeatherProvider extends BaseVM {
     print(latitude);
     weatherModel = await _api.fetchDataWeather(latitude, longitude);
     print(detailWeatherModel.getWeatherIcon(weatherModel.weather[0].id));
-    // message = detailWeatherModel.getMessage(20);
     iconWeather = detailWeatherModel.getWeatherIcon(weatherModel.weather[0].id);
     double celcius = weatherModel.main.temp - 273.15;
     message = detailWeatherModel.getMessage(celcius.toInt());
-    print(weatherModel.weather[0].description);
     setBusy();
   }
 }
