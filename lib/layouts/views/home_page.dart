@@ -72,7 +72,7 @@ class _HomePageViewState extends State<HomePageView> {
               child: Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
+                  children: <Widget>[                    
                     Consumer<WeatherProvider>(
                       builder: (context, model, _) => StreamBuilder<bool>(
                         stream: model.isLoading,
@@ -89,7 +89,13 @@ class _HomePageViewState extends State<HomePageView> {
                                   child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-
+                                    Chip(
+                                      avatar: CircleAvatar(
+                                        backgroundColor: Colors.grey.shade800,
+                                        child: Text(':('),
+                                      ),
+                                      label: Text('Check Your Internet Connection'),
+                                    ),
                                     Text(model.city, style: TextStyle(fontSize: 30),),
                                     Text(formatted, style: TextStyle(color: Colors.grey),),
                                     SizedBox(height: 30,),
