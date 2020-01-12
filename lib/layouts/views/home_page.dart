@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -22,27 +24,16 @@ class HomePageView extends StatefulWidget {
 class _HomePageViewState extends State<HomePageView> {
 
   TextEditingController cityController = TextEditingController();
-
-  // final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
-
-
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
   
   @override
   void initState() {
+    Provider.of<WeatherProvider>(context, listen: false).connectionChanged();
     Provider.of<WeatherProvider>(context, listen: false).getDataWeather();
+    Provider.of<WeatherProvider>(context, listen: false).getDataOffline();
     super.initState();
-    // // WidgetsBinding.instance
-    // //   .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
-    // _refresh();
   }
 
-  // Future<Null> _refresh() async{
-  //    _refreshIndicatorKey.currentState?.show(atTop: false);
-  //   await Future.delayed(Duration(seconds: 2));
-  //  return Provider.of<WeatherProvider>(context, listen: false).getDataWeather();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -56,14 +47,15 @@ class _HomePageViewState extends State<HomePageView> {
         header: WaterDropHeader(),
         onRefresh: () async {
           await Future.delayed(Duration(milliseconds: 1000));
+          
+          Provider.of<WeatherProvider>(context, listen: false).connectionChanged();
+        
           Provider.of<WeatherProvider>(context, listen: false).getDataWeather();
+        
+          Provider.of<WeatherProvider>(context, listen: false).getDataOffline();
+        
           if (mounted) setState(() {});
           _refreshController.refreshCompleted();
-        },
-        onLoading: () async {
-          await Future.delayed(Duration(milliseconds: 1000));
-          if (mounted) setState(() {});
-          _refreshController.loadFailed();
         },
         child: SafeArea(
           child: SingleChildScrollView(
@@ -77,9 +69,45 @@ class _HomePageViewState extends State<HomePageView> {
                       builder: (context, model, _) => StreamBuilder<bool>(
                         stream: model.isLoading,
                         builder: (context, snapshot) {
-                          if(snapshot.data != true) {
-                            return Center(child: CircularProgressIndicator(),);
+                          if(model.isOffline == true) {
+                            return (model.message != null) ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(30))
+                              ),
+                              child: Card(
+                                elevation: 4.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+
+                                    Text(model.city, style: TextStyle(fontSize: 30),),
+                                    Text(formatted, style: TextStyle(color: Colors.grey),),
+                                    SizedBox(height: 30,),
+                                    Center(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(model.iconWeather, style: TextStyle(fontSize: 80)),
+                                          Text(model.suhu.round().toString() +'°C', style: TextStyle(fontSize: 40),),                                
+                                          Text(model.description),
+                                          Text(model.message),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                                          ),
+                              ),
+                            ) : Text("You are Offline.\nYou Should connect internet first");
                           }
+                          
+                           if(snapshot.data != true){
+                            print('ce');
+                            print(model.isOffline);
+                              return Center(child: CircularProgressIndicator(),);
+                            }
+                          
                           return Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.all(Radius.circular(30))
@@ -99,7 +127,7 @@ class _HomePageViewState extends State<HomePageView> {
                                     child: Column(
                                       children: <Widget>[
                                         Text(model.iconWeather, style: TextStyle(fontSize: 80)),
-                                        Text((model.weatherModel.main.temp - 273.15).toString()+'°C', style: TextStyle(fontSize: 40),),                                
+                                        Text((model.weatherModel.main.temp - 273.15).round().toString() +'°C', style: TextStyle(fontSize: 40),),                                
                                         Text(model.weatherModel.weather[0].description),
                                         Text(model.message),
                                       ],
@@ -131,8 +159,6 @@ class _HomePageViewState extends State<HomePageView> {
                               onPressed: () {
                                 model.getCityWeather(cityController.text);
                                 print(cityController.text);
-                                // print(model.cityWeatherModel.main.temp - 273.15);
-                                // print(model.cityWeatherModel.name);
                               },
                               child: Text('Search'),
                             );
