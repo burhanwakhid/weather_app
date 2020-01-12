@@ -41,6 +41,9 @@ class _HomePageViewState extends State<HomePageView> {
       var formatter = new DateFormat('dd MMMM yyyy');
       String formatted = formatter.format(now);
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Your Current Weather', style: TextStyle(color: Colors.white)),
+      ),
       body: SmartRefresher(
         controller: _refreshController,
         enablePullUp: true,
@@ -56,6 +59,11 @@ class _HomePageViewState extends State<HomePageView> {
         
           if (mounted) setState(() {});
           _refreshController.refreshCompleted();
+        },
+        onLoading: () async {
+          await Future.delayed(Duration(milliseconds: 1000));
+          if (mounted) setState(() {});
+          _refreshController.loadFailed();
         },
         child: SafeArea(
           child: SingleChildScrollView(
@@ -142,10 +150,16 @@ class _HomePageViewState extends State<HomePageView> {
                       ),
                       
                     ),
-                    SizedBox(height: 45,),
+                    SizedBox(height: 25,),
+                    Center(child: Text('Or you can search by city')),
+                    SizedBox(height: 25,),
                      TextFormField(
                         decoration: InputDecoration(
                           hintText: 'Search Weather by City',
+                          border: new OutlineInputBorder(
+                            borderRadius: new BorderRadius.circular(25.0),
+                            borderSide: new BorderSide(),
+                        ),
                         ),
                         controller: cityController
                       ),
@@ -155,12 +169,19 @@ class _HomePageViewState extends State<HomePageView> {
                         builder: (context, model, _) => StreamBuilder<bool>(
                           stream: model.isLoading,
                           builder: (context, snapshot) {
-                            return RaisedButton(
-                              onPressed: () {
-                                model.getCityWeather(cityController.text);
-                                print(cityController.text);
-                              },
-                              child: Text('Search'),
+                            return Container(
+                              width: double.infinity,
+                              child: RaisedButton(
+                                color: Colors.blue,
+                                shape:new RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(18.0),
+                                  side: BorderSide(color: Colors.blue)),
+                                onPressed: () {
+                                  model.getCityWeather(cityController.text);
+                                  print(cityController.text,);
+                                },
+                                child: Text('Search', style: TextStyle(color: Colors.white),),
+                              ),
                             );
                           }
                         ),
